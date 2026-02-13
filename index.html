@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Bouquet Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #ffb6d9;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 500px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+
+        .bouquet-container {
+            position: relative;
+            width: 500px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Flower Groups */
+        .flowers {
+            position: absolute;
+            width: 220px;
+            height: 250px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            animation: sway 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .flower:hover {
+            transform: scale(1.2);
+        }
+
+        .flower:nth-child(1) { left: 20px; top: 10px; animation-delay: 0s; }
+        .flower:nth-child(2) { left: 80px; top: 0px; animation-delay: 0.5s; }
+        .flower:nth-child(3) { left: 140px; top: 15px; animation-delay: 1s; }
+        .flower:nth-child(4) { left: 170px; top: 70px; animation-delay: 1.5s; }
+        .flower:nth-child(5) { left: 60px; top: 80px; animation-delay: 0.3s; }
+        .flower:nth-child(6) { left: 120px; top: 90px; animation-delay: 0.8s; }
+        .flower:nth-child(7) { left: 30px; top: 140px; animation-delay: 1.2s; }
+        .flower:nth-child(8) { left: 150px; top: 140px; animation-delay: 1.7s; }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-2deg) translateY(0); }
+            50% { transform: rotate(2deg) translateY(-5px); }
+        }
+
+        /* Stem */
+        .stem {
+            position: absolute;
+            width: 20px;
+            height: 120px;
+            background: #2d5016;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        /* Ribbon */
+        .ribbon {
+            position: absolute;
+            width: 25px;
+            height: 60px;
+            background: #ff1493;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Valentine Message */
+        .valentine-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .valentine-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .valentine-message {
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translate(var(--tx), 100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Flower Selection Screen */
+        .flower-selection {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffb6d9;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            flex-direction: column;
+            gap: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .flower-selection.show {
+            display: flex;
+        }
+
+        .flower-header {
+            font-size: 40px;
+            font-weight: bold;
+            color: #ff69b4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .flowers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .flower-choice {
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            border: 3px solid transparent;
+            animation: floatMove 3s ease-in-out infinite;
+        }
+
+        .flower-choice:hover {
+            transform: scale(1.1);
+            border-color: #ff1493;
+        }
+
+        .flower-choice img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flower-choice:nth-child(1) { animation-delay: 0s; }
+        .flower-choice:nth-child(2) { animation-delay: 0.2s; }
+        .flower-choice:nth-child(3) { animation-delay: 0.4s; }
+        .flower-choice:nth-child(4) { animation-delay: 0.6s; }
+        .flower-choice:nth-child(5) { animation-delay: 0.8s; }
+        .flower-choice:nth-child(6) { animation-delay: 1s; }
+
+        @keyframes floatMove {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .flower-choice.spinning {
+            animation: spin 0.8s ease-in-out !important;
+        }
+
+        @keyframes spin {
+            0% { transform: rotateY(0) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(360deg) scale(1); }
+        }
+
+        /* Envelope Card */
+        .envelope-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 400px;
+            background: linear-gradient(135deg, #ffb6d9 0%, #ffd6e8 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 600;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .envelope-card.show {
+            transform: translate(-50%, -50%) scale(1) !important;
+        }
+
+        .envelope-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelope-message {
+            font-size: 18px;
+            color: #d946a6;
+            line-height: 1.6;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .envelope-close {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff1493;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .envelope-close:hover {
+            background: #ff69b4;
+            transform: scale(1.05);
+        }
+
+        .envelope-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 550;
+            display: none;
+        }
+
+        .envelope-overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="bouquet-container" onclick="celebrateValentine()">
+            <img src="cat.jfif" alt="cat" style="width: 300px; height: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); cursor: pointer; transition: transform 0.3s ease;">
+        </div>
+
+        <div style="color: white; margin-top: 30px; font-size: 18px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">
+         Click the bouquet 
+        </div>
+    </div>
+
+    <div class="valentine-overlay" id="valentineOverlay">
+        <div class="valentine-message">Happy Valentine's Day Lovelovee!💕 </div>
+    </div>
+
+    <div class="flower-selection" id="flowerSelection">
+        <div class="flower-header">Choose a Flower 🌹</div>
+        <div class="flowers-grid" id="flowersGrid"></div>
+    </div>
+
+    <div class="envelope-overlay" id="envelopeOverlay"></div>
+    <div class="envelope-card" id="envelopeCard">
+        <img src="" id="envelopeImage" class="envelope-image" alt="Card image">
+        <div class="envelope-message" id="envelopeMessage"></div>
+        <button class="envelope-close" onclick="closeEnvelope()">Close Card</button>
+    </div>
+
+    <script>
+        const flowerImages = ['pink1.png', 'pink2.png', 'pink3.png', 'pink4.png', 'pink5.png', 'pink6.png'];
+        const flowerData = [
+            { image: 'P1.jpg', message: 'I love you every single day, in every little way.' },
+            { image: 'P2.jpg', message: 'I am so proud of you, for all that you are and all you\'re becoming.' },
+            { image: 'P3.jpg', message: 'You are my home, my safe place, my heart.' },
+            { image: 'P4.jpg', message: 'You always have me, no matter what, through everything.' },
+            { image: 'P5.jpg', message: 'With you, even ordinary moments feel magical.' },
+            { image: 'P6.jpg', message: 'I can\'t wait to make more memories with you, today and always.' }
+        ];
+        let selectedFlower = null;
+
+        function celebrateValentine() {
+            const overlay = document.getElementById('valentineOverlay');
+            overlay.classList.add('show');
+            
+            // Create confetti
+            createConfetti();
+            
+            // Show flower selection after 3 seconds
+            setTimeout(() => {
+                overlay.classList.remove('show');
+                showFlowerSelection();
+            }, 3000);
+        }
+
+        function createConfetti() {
+            const confettiCount = 50;
+            const colors = ['❤️', '💕', '💖', '💗', '💝', '🌹', '🌷'];
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.textContent = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-50px';
+                confetti.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                confetti.style.animation = `confettiFall ${Math.random() * 2 + 2}s ease-in forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        function showFlowerSelection() {
+            const flowersGrid = document.getElementById('flowersGrid');
+            flowersGrid.innerHTML = '';
+            
+            flowerImages.forEach((flower, index) => {
+                const flowerChoice = document.createElement('div');
+                flowerChoice.className = 'flower-choice';
+                flowerChoice.innerHTML = `<img src="${flower}" alt="flower ${index + 1}" onerror="this.src='https://via.placeholder.com/120?text=Flower'">`;
+                flowerChoice.onclick = () => selectFlower(index, flowerChoice);
+                flowersGrid.appendChild(flowerChoice);
+            });
+            
+            document.getElementById('flowerSelection').classList.add('show');
+        }
+
+        function selectFlower(index, element) {
+            selectedFlower = index;
+            element.classList.add('spinning');
+            
+            setTimeout(() => {
+                document.getElementById('flowerSelection').classList.remove('show');
+                showEnvelope();
+            }, 800);
+        }
+
+        function showEnvelope() {
+            document.getElementById('envelopeOverlay').classList.add('show');
+            document.getElementById('envelopeCard').classList.add('show');
+            document.querySelector('.container').style.display = 'none';
+            
+            // Set image and message based on selected flower
+            const flower = flowerData[selectedFlower];
+            document.getElementById('envelopeImage').src = flower.image;
+            document.getElementById('envelopeMessage').textContent = flower.message;
+        }
+
+        function closeEnvelope() {
+            document.getElementById('envelopeOverlay').classList.remove('show');
+            document.getElementById('envelopeCard').classList.remove('show');
+            
+            // Return to flower selection
+            setTimeout(() => {
+                document.getElementById('flowerSelection').classList.add('show');
+            }, 600);
+        }
+
+        // Add click instruction
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Click the bouquet for a Valentine surprise!');
+        });
+    </script>
+</body>
+</html>
